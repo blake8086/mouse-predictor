@@ -1,0 +1,21 @@
+<script src="jquery.min.js"></script>
+<script>
+	$(function() {
+		var lastStates = [];
+		
+		function showPrediction(e) {
+			lastStates.unshift({x: e.pageX, y: e.pageY});
+			$('#mouse-position').html(e.pageX + ', ' + e.pageY);
+			var predictedPosition = {
+				x: 2 * lastStates[0].x - lastStates[1].x,
+				y: 2 * lastStates[0].y - lastStates[1].y
+			};
+			var left = (predictedPosition.x - 21) + 'px';
+			var top = (predictedPosition.y - 21) + 'px';
+			$('.crosshair').css('left', left).css('top', top);
+		}
+		$(document).mousemove(showPrediction).bind('touchmoved', showPrediction);
+	});
+</script>
+<div id="mouse-position"></div>
+<div class="crosshair" style="position: absolute;"><img src="crosshair16.png"></div>
