@@ -13,6 +13,7 @@
 			var left = (predictedPosition.x - 21) + 'px';
 			var top = (predictedPosition.y - 21) + 'px';
 			$('.crosshair').css('left', left).css('top', top);
+			e.preventDefault();
 		}
 		$(document).mousemove(showPrediction).bind('touchmove', showPrediction);
 	});
