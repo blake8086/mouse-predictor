@@ -14,7 +14,7 @@
 			var top = (predictedPosition.y - 21) + 'px';
 			$('.crosshair').css('left', left).css('top', top);
 		}
-		$(document).mousemove(showPrediction).bind('touchmoved', showPrediction);
+		$(document).mousemove(showPrediction).bind('touchmove', showPrediction);
 	});
 </script>
 <div id="mouse-position"></div>
