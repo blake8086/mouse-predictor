@@ -18,7 +18,7 @@
 			$('.crosshair').css('left', left).css('top', top);
 			e.preventDefault();
 		}
-		$(document).mousemove(showPrediction).bind('touchmove', showPrediction);
+		$(document).bind('touchmove', showPrediction);
 	});
 </script>
 <div id="mouse-position"></div>
