@@ -4,7 +4,10 @@
 		var lastStates = [];
 		
 		function showPrediction(e) {
-			lastStates.unshift({x: e.pageX, y: e.pageY});
+			var newX = e.pageX || e.changedTouches[0].pageX;
+			var newY = e.pageY || e.changedTouches[0].pageY;
+			
+			lastStates.unshift({x: newX, y: newY});
 			$('#mouse-position').html(e.pageX + ', ' + e.pageY);
 			var predictedPosition = {
 				x: 2 * lastStates[0].x - lastStates[1].x,
