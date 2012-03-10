@@ -8,7 +8,7 @@
 			var newY = e.pageY || e.changedTouches[0].pageY;
 			
 			lastStates.unshift({x: newX, y: newY});
-			$('#mouse-position').html(e.pageX + ', ' + e.pageY);
+			$('#mouse-position').html('<p>' + e.pageX + ', ' + e.pageY + '</p><p>' + e.changedTouches + '</p>');
 			var predictedPosition = {
 				x: 2 * lastStates[0].x - lastStates[1].x,
 				y: 2 * lastStates[0].y - lastStates[1].y
