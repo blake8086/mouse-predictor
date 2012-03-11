@@ -16,12 +16,12 @@
 				x: 2 * lastStates[0].x - lastStates[1].x,
 				y: 2 * lastStates[0].y - lastStates[1].y
 			};
-			var left = (predictedPosition.x - 21) + 'px';
-			var top = (predictedPosition.y - 21) + 'px';
+			var left = (predictedPosition.x - 123) + 'px';
+			var top = (predictedPosition.y - 123) + 'px';
 			$('.crosshair').css('left', left).css('top', top);
 		}
 		$(document).mousemove(showPrediction).bind('touchmove', showPrediction);
 	});
 </script>
 <div id="mouse-position"></div>
-<div class="crosshair" style="position: absolute;"><img src="crosshair16.png"></div>
+<div class="crosshair" style="position: absolute;"><img src="crosshair.png"></div>
