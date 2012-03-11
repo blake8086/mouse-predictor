@@ -1,3 +1,4 @@
+<title>Predict!</title>
 <script src="jquery.min.js"></script>
 <script>
 	$(function() {
@@ -6,15 +7,28 @@
 		function showPrediction(e) {
 			e.preventDefault();
 
-			$('#mouse-position').html('<p>' + e.pageX + ', ' + e.pageY + '</p><p>' + e.originalEvent.touches + '</p>');
-
 			var newX = e.pageX || e.originalEvent.touches[0].pageX;
 			var newY = e.pageY || e.originalEvent.touches[0].pageY;
 			
-			lastStates.unshift({x: newX, y: newY});
+			lastStates.unshift({x: newX, y: newY, timestamp: +new Date()});
+
+			$('#mouse-position').html(
+				'<p>' + lastStates[0].x + ', ' + lastStates[0].y + '</p>' +
+				'<p>' + lastStates[1].x + ', ' + lastStates[1].y + '</p>' +
+				'<p>' + lastStates[2].x + ', ' + lastStates[2].y + '</p>' +
+				'<p>velocity: ' + (lastStates[0].x - lastStates[1].x) + ', ' + (lastStates[0].y - lastStates[1].y) + '</p>' +
+				'<p>acceleration: ' + (lastStates[0].x - 2 * lastStates[1].x + lastStates[2].x) + ', ' + (lastStates[0].y - 2 * lastStates[1].y + lastStates[2].y) + '</p>'
+			);
+			
+			var dt = lastStates[0].timestamp - lastStates[1].timestamp;
+			var velocity = {
+				dx: (lastStates[0].x - lastStates[1].x) / dt,
+				dy: (lastStates[0].y - lastStates[1].y) / dt
+			};
+			
 			var predictedPosition = {
-				x: 2 * lastStates[0].x - lastStates[1].x,
-				y: 2 * lastStates[0].y - lastStates[1].y
+				x: lastStates[0].x + velocity.dx * 100,
+				y: lastStates[0].y + velocity.dy * 100
 			};
 			var left = (predictedPosition.x - 123) + 'px';
 			var top = (predictedPosition.y - 123) + 'px';
