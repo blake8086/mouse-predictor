@@ -33,8 +33,8 @@
 			
 			var left = (newX - 123) + 'px';
 			var top = (newY - 123) + 'px';
-			//use prediction if it's turned on
-			if ($('input[name="prediction-enabled"]').attr('checked') == 'checked') {
+			//use prediction only on right half of document
+			if (newX * 2 > window.innerWidth) {
 				left = (predictedPosition.x - 123) + 'px';
 				top = (predictedPosition.y - 123) + 'px';
 			}
@@ -44,5 +44,4 @@
 	});
 </script>
 <div id="mouse-position"></div>
-<input type="checkbox" name="prediction-enabled" checked="checked"><label for="prediction-enabled"> Enable Prediction</label>
 <div class="crosshair" style="position: absolute;"><img src="crosshair.png"></div>
