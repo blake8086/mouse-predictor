@@ -30,12 +30,19 @@
 				x: lastStates[0].x + velocity.dx * 100,
 				y: lastStates[0].y + velocity.dy * 100
 			};
-			var left = (predictedPosition.x - 123) + 'px';
-			var top = (predictedPosition.y - 123) + 'px';
+			
+			var left = (newX - 123) + 'px';
+			var top = (newY - 123) + 'px';
+			//use prediction if it's turned on
+			if ($('input[name="prediction-enabled"]').attr('checked') == 'checked') {
+				left = (predictedPosition.x - 123) + 'px';
+				top = (predictedPosition.y - 123) + 'px';
+			}
 			$('.crosshair').css('left', left).css('top', top);
 		}
 		$(document).mousemove(showPrediction).bind('touchmove', showPrediction);
 	});
 </script>
 <div id="mouse-position"></div>
+<input type="checkbox" name="prediction-enabled" checked="checked"><label for="prediction-enabled"> Enable Prediction</label>
 <div class="crosshair" style="position: absolute;"><img src="crosshair.png"></div>
