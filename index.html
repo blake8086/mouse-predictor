@@ -39,7 +39,7 @@
 				x: lastStates[0].x + velocity.x * lag + acceleration.x * lag,
 				y: lastStates[0].y + velocity.y * lag + acceleration.y * lag
 			};
-			var adjustment = 0.5;
+			var adjustment = 0.7;
 			predictedPosition.x = lastPrediction.x * adjustment + predictedPosition.x * (1 - adjustment);
 			predictedPosition.y = lastPrediction.y * adjustment + predictedPosition.y * (1 - adjustment);
 			
