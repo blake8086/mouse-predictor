@@ -3,6 +3,8 @@
 <script>
 	$(function() {
 		var lastStates = [];
+		var lastPrediction = {x: 0, y: 0};
+		var predictedPosition = {x: 0, y: 0};
 		
 		function showPrediction(e) {
 			e.preventDefault();
@@ -19,8 +21,8 @@
 			};
 			var dt2 = lastStates[1].timestamp - lastStates[2].timestamp;
 			var acceleration = {
-				x: (lastStates[2].x - lastStates[1].x) / dt2 - (lastStates[1].x - lastStates[0].x) / dt,
-				y: (lastStates[2].y - lastStates[1].y) / dt2 - (lastStates[1].y - lastStates[0].y) / dt
+				x: velocity.x - (lastStates[1].x - lastStates[2].x) / dt2,
+				y: velocity.y - (lastStates[1].y - lastStates[2].y) / dt2
 			};
 			
 			$('#mouse-position').html(
@@ -32,10 +34,14 @@
 			
 			//how many ms into the future we are predicting
 			var lag = 100;
-			var predictedPosition = {
+			lastPrediction = predictedPosition;
+			predictedPosition = {
 				x: lastStates[0].x + velocity.x * lag + acceleration.x * lag,
 				y: lastStates[0].y + velocity.y * lag + acceleration.y * lag
 			};
+			var adjustment = 0.5;
+			predictedPosition.x = lastPrediction.x * adjustment + predictedPosition.x * (1 - adjustment);
+			predictedPosition.y = lastPrediction.y * adjustment + predictedPosition.y * (1 - adjustment);
 			
 			var left = (newX - 123) + 'px';
 			var top = (newY - 123) + 'px';
