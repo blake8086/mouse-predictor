@@ -40,8 +40,8 @@
 			var lag = 100;
 			lastPrediction = predictedPosition;
 			predictedPosition = {
-				x: lastStates[0].x + velocity.x * lag + 0.5 * acceleration.x * lag,
-				y: lastStates[0].y + velocity.y * lag + 0.5 * acceleration.y * lag
+				x: lastStates[0].x + velocity.x * lag, // + 0.5 * acceleration.x * lag,
+				y: lastStates[0].y + velocity.y * lag // + 0.5 * acceleration.y * lag
 			};
 			var adjustment = 0;
 			predictedPosition.x = lastPrediction.x * adjustment + predictedPosition.x * (1 - adjustment);
@@ -49,15 +49,15 @@
 			
 			var left = newX - (indicatorSize - 1) / 2;
 			var top = newY - (indicatorSize - 1) / 2;
+
 			context.fillStyle = 'green';
 			context.fillRect(left, top, indicatorSize, indicatorSize);
-			//use prediction only on right half of document
-			if (newX * 2 > window.innerWidth) {
-				left = predictedPosition.x - (indicatorSize - 1) / 2;
-				top = predictedPosition.y - (indicatorSize - 1) / 2;
-				context.fillStyle = 'blue';
-				context.fillRect(left, top, indicatorSize, indicatorSize);
-			}
+
+			left = predictedPosition.x - (indicatorSize - 1) / 2;
+			top = predictedPosition.y - (indicatorSize - 1) / 2;
+
+			context.fillStyle = 'blue';
+			context.fillRect(left, top, indicatorSize, indicatorSize);
 		}
 		$(document).mousemove(showPrediction).bind('touchmove', showPrediction);
 	});
