@@ -5,8 +5,9 @@
 		var lastStates = [];
 		var predictedPosition = {x: 0, y: 0};
 		var indicatorSize = 5;
-		var velocity = {x: 0, y: 0};
-		var acceleration = {x: 0, y: 0};
+		var analysisFrames = 5;
+		//number of frames to predict
+		var predictionFrames = 5;
 		
 		$('#canvas').attr('height', window.innerHeight).attr('width', window.innerWidth);
 		var context = document.getElementById('canvas').getContext('2d');
@@ -19,23 +20,65 @@
 			
 			lastStates.unshift({x: newX, y: newY, timestamp: +new Date()});
 
-			var dt = lastStates[0].timestamp - lastStates[4].timestamp;
-			velocity.x = (lastStates[0].x - lastStates[4].x) / dt;
-			velocity.y = (lastStates[0].y - lastStates[4].y) / dt;
-
+			var velocity = [];
+			//analyze last n frames
+			for (var i = 0; i < analysisFrames; i++) {
+				var a = lastStates[i];
+				var b = lastStates[i + 1];
+				var dt = a.timestamp - b.timestamp;
+				var dx = a.x - b.x;
+				var dy = a.y - b.y;
+				var dtheta = Math.atan2(dy, dx);
+				var dr = Math.sqrt(dx * dx + dy * dy) / dt;
+				velocity.push({
+					r: dr,
+					t: dt,
+					theta: dtheta,
+				});
+			}
+			
+			var acceleration = [];
+			//analyze last n frames
+			for (var i = 0; i < velocity.length - 1; i++) {
+				var a = velocity[i];
+				var b = velocity[i + 1];
+				var dtheta = a.theta - b.theta;
+				var dr = a.r - b.r;
+				acceleration.push({
+					r: dr,
+					theta: dtheta,
+				});
+			}
+			
+			//position: 0   1   2   3   4
+			//velocity:   0   1   2   3
+			//acceleration: 0   1   2
+			
+			//simulate future frames
+			//this is a crude discrete prediction, using n 16.6ms frames instead of a continuous method
+			predictedPosition.x = newX;
+			predictedPosition.y = newY;
+			var step = {
+				dr: velocity[0].r,
+				dtheta: velocity[0].theta
+			}
+			for (var i = 0; i < predictionFrames; i++) {
+				context.fillStyle = 'red';
+				context.fillRect(predictedPosition.x - (indicatorSize - 1) / 2, predictedPosition.y - (indicatorSize - 1) / 2, indicatorSize, indicatorSize);
+				step.dr += acceleration[0].r;
+				step.dtheta += acceleration[0].theta;
+				console.log('step dtheta', step.dtheta);
+				console.log('cos', Math.cos(dtheta), 'sin', Math.sin(dtheta));
+				predictedPosition.x += step.dr * Math.cos(step.dtheta) * 16.67;
+				predictedPosition.y += step.dr * Math.sin(step.dtheta) * 16.67;
+			}
+			console.log('theta accel:', acceleration[0].theta);
+			console.log(predictedPosition.x - newX, predictedPosition.y - newY);
+						
 			$('#mouse-position').html(
-				'<p>' + lastStates[0].x + ', ' + lastStates[0].y + '</p>' +
-				'<p>time: ' + dt + '</p>' +
-				'<p>velocity: ' + velocity.x + ', ' + velocity.y + '</p>'
+				'<p>' + lastStates[0].x + ', ' + lastStates[0].y + '</p>'
 			);
 			
-			//how many ms into the future we are predicting
-			var lag = 5 * (1000 / 60);
-			predictedPosition = {
-				x: lastStates[0].x + velocity.x * lag,
-				y: lastStates[0].y + velocity.y * lag
-			};
-
 			var left = newX - (indicatorSize - 1) / 2;
 			var top = newY - (indicatorSize - 1) / 2;
 
