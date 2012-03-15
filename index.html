@@ -4,8 +4,8 @@
 	$(function() {
 		var lastStates = [];
 		var predictedPosition = {x: 0, y: 0};
-		var indicatorSize = 5;
-		var analysisFrames = 5;
+		var indicatorSize = 3;
+		var analysisFrames = 10;
 		//number of frames to predict
 		var predictionFrames = 5;
 		
@@ -58,22 +58,40 @@
 			//this is a crude discrete prediction, using n 16.6ms frames instead of a continuous method
 			predictedPosition.x = newX;
 			predictedPosition.y = newY;
+			
 			var step = {
-				dr: velocity[0].r,
-				dtheta: velocity[0].theta
+				dr: 0,
+				dtheta: 0
 			}
+			$.each(velocity, function(i, e) {
+				step.dr += e.r / velocity.length;
+				step.dtheta += e.theta / velocity.length;
+			});
+			
+			var averageAcceleration = {
+				r: 0,
+				theta: 0
+			}
+			$.each(acceleration, function(i, e) {
+				averageAcceleration.r += e.r / acceleration.length;
+				averageAcceleration.theta += e.theta / acceleration.length;
+			});
+			
 			for (var i = 0; i < predictionFrames; i++) {
-				context.fillStyle = 'red';
-				context.fillRect(predictedPosition.x - (indicatorSize - 1) / 2, predictedPosition.y - (indicatorSize - 1) / 2, indicatorSize, indicatorSize);
-				step.dr += acceleration[0].r;
-				step.dtheta += acceleration[0].theta;
+				context.beginPath();
+				context.strokeStyle = 'red';
+				context.moveTo(predictedPosition.x, predictedPosition.y);
+
+				step.dr += averageAcceleration.r;
+				step.dtheta += averageAcceleration.theta;
 				console.log('step dtheta', step.dtheta);
 				console.log('cos', Math.cos(dtheta), 'sin', Math.sin(dtheta));
 				predictedPosition.x += step.dr * Math.cos(step.dtheta) * 16.67;
 				predictedPosition.y += step.dr * Math.sin(step.dtheta) * 16.67;
+
+				context.lineTo(predictedPosition.x, predictedPosition.y);
+				context.stroke();
 			}
-			console.log('theta accel:', acceleration[0].theta);
-			console.log(predictedPosition.x - newX, predictedPosition.y - newY);
 						
 			$('#mouse-position').html(
 				'<p>' + lastStates[0].x + ', ' + lastStates[0].y + '</p>'
